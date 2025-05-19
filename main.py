@@ -11,7 +11,6 @@ from langchain_core.messages import HumanMessage
 from langchain_chroma import Chroma
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_core.documents import Document
-from haikus import haikus
 
 load_dotenv()
 
@@ -30,6 +29,7 @@ if __name__ == "__main__":
         exit(0)
 
     signal.signal(signal.SIGINT, sigkill_handler)
+    signal.signal(signal.SIGTERM, sigkill_handler)
 
     # Parse arguments
     parser = argparse.ArgumentParser()
@@ -44,16 +44,53 @@ if __name__ == "__main__":
     # add haiku subparser
     haiku_subparser = subparser.add_parser("haiku")
     haiku_subparser.add_argument("--verbose", "-v", action="store_true")
-    
+
+    # add load-haiku subparser
+    load_haiku_subparser = subparser.add_parser("load-haiku")
+    load_haiku_subparser.add_argument("--verbose", "-v", action="store_true")
+    load_haiku_subparser.add_argument("--file", type=str, default=None)
+
     args = parser.parse_args()
 
-    if args.mode == "haiku":
+    if args.mode == "load-haiku":
+        # Load embedding model
+        embeddings_model = os.getenv("EMBEDDING_MODEL")
 
-        embeddings_model = "mxbai-embed-large:latest"
-
-        # Load model
         if args.verbose:
-            print(f"Loading model {embeddings_model}...")
+            print(f"Loading embedding model {embeddings_model}...")
+
+        embeddings = OllamaEmbeddings(model=embeddings_model)
+
+        # Create vector store
+        vector_store = Chroma(
+            embedding_function=embeddings,
+            persist_directory=os.getenv("VECTOR_STORE_DATA")
+        )
+
+        if args.file:
+            with open(args.file, "r") as f:
+                haikus = f.readlines()
+
+            for haiku in haikus:
+                vector_store.add_texts([haiku])
+
+            console.print(f"{len(haikus)} haikus added to vector store.")
+
+        else:
+            while True:
+                user_input = console.input(HUMAN_PROMPT_PREFIX)
+                vector_store.add_texts([user_input])
+
+                if args.verbose:
+                    console.print(BOT_PROMPT_PREFIX, end="")
+                    console.print(f"Haiku added to vector store.")
+
+    elif args.mode == "haiku":
+        # Load embedding model
+        embeddings_model = os.getenv("EMBEDDING_MODEL")
+
+        if args.verbose:
+            print(f"Loading embedding model {embeddings_model}...")
 
         embeddings = OllamaEmbeddings(model=embeddings_model)
 
@@ -68,9 +105,12 @@ if __name__ == "__main__":
 
             console.print(BOT_PROMPT_PREFIX, end="")
             response = vector_store.similarity_search(query=user_input, k=1)
-            console.print(response[0].page_content)
-        
+            if len(response) == 0:
+                console.print("Je ne connais aucun haiku ¯\\_(ツ)_/¯")
+                continue
 
+            console.print(response[0].page_content, end="")
+        
     elif args.mode == "chat":
 
         # Read system prompt

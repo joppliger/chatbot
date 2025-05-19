@@ -1,0 +1,123 @@
+Clavier sous mes mains / le code coule comme l’eau / bug surgit, discret. 
+Écran lumineux / des idées en plein tumulte / naît l’algorithme. 
+Compile, échoue / l’erreur pointe sa colère / je cherche en silence. 
+Café refroidi / la boucle tourne sans fin / j'oublie le matin. 
+If, else, if encore / le monde en conditionnel / vrai ou faux, mon sort. 
+Sur la console / des mots blancs comme la neige / log d’un vieux système. 
+Fonction récursive / elle s'appelle et se perd / l'abîme mémoire. 
+Serveur en détresse / requêtes comme des oiseaux / frappent sans répit. 
+Version contrôlée / Git me murmure les temps / passé, présent, fautes. 
+Code refactoré / la beauté dans la structure / le chaos dompté. 
+Écran noir, erreur / la promesse de génie / brisée en silence. 
+Indentation folle / Python grince des dents, sévère / tabulations fuient. 
+Tiré du sommeil / le bug m’appelait encore / il riait, moqueur. 
+Stack overflow / des âmes perdues en quête / de leur point-virgule. 
+Branches entremêlées / merge conflict comme un duel / je tranche le vrai. 
+Console ouverte / je parle en lignes muettes / le monde répond. 
+Nuit sans une pause / debug, build, et recommence / l’aube est un commit. 
+Clavier effleuré / chaque touche un battement / de cœur numérique. 
+Une simple ligne / fait danser tout un système / poésie du code. 
+Syntaxe oubliée / le programme se rebelle / point virgule roi.
+Bit après le bit / le monde prend une forme / dans mon terminal.
+Erreur fatale / j’ai juste oublié un point / journée envolée.
+Clavier matinal / les doigts dansent sans penser / script automatique.
+Boucle infinie / le processeur en sueur / l’écran reste froid.
+Logique implacable / if else elif else if / mais où va la fin ?
+Pixel par pixel / interface prend naissance / doux front-end naissant.
+Clé API change / l’univers perd sa couleur / 403 me mord.
+Base de données / des secrets dans chaque champ / requêtes muettes.
+Docker redémarre / les conteneurs s’alignent / monde réinitialisé.
+Crash dans la mémoire / segmentation fault soudain / silence d’acier.
+Git push, Git pull / je navigue dans le flux / du passé récent.
+Chaque caractère / une décision précise / bug dans l’ombre dort.
+Prompt sur l’écran noir / je commande et l’univers / obéit sans bruit.
+JSON bien formé / accolade fermée enfin / paix dans mon esprit.
+Regex oublié / le chaos des chaînes règne / filtre sans espoir.
+Café sur le bord / clavier en sueur panique / ctrl+z trop tard.
+Build échoue encore / le pipeline se cabre fort / erreur ligne deux.
+Script de déploiement / une coquille surgit / serveur en flammes.
+Indentation pure / tabulations disciplinées / Python applaudit.
+Classes en cascade / héritage bien tracé / OOP en fête.
+Framework trop récent / je lis la doc en pleurant / code inachevé.
+Un commit trop vaste / je regrette sans retour / Git ne pardonne.
+Faille détectée / sécurité vacillante / patch dans la hâte.
+Ligne par ligne, paix / refactor sans compromis / le code respire.
+Méthode statique / si froide, mais si utile / sans objet, si clair.
+Sprints qui se succèdent / user stories comme vents / agile en tempête.
+Intégration / tests tombent un par un / la CI s’effondre.
+Fonctions lambda / furtives comme des ombres / dans le flux discret.
+Serveur distant pleure / SSH pour le bercer / commandes douces.
+Binaire cruel / zéro ou un, point final / dilemme figé.
+La doc oubliée / j’invoque les anciens dieux / Stack Overflow brille.
+Ligne de commande / syntaxe gravée en moi / je parle en Bash.
+Clé étrangère / relation perdue dans l’ombre / SQL me punit.
+JS s’impose / async danse sous mes yeux / callback en spirale.
+Hackathon nocturne / cerveaux vrombissent en chœur / pizza en témoin.
+Microservice / solitude dans le réseau / JSON pour amis.
+Fusion redoutée / les branches se confrontent / code en dualité.
+Pull request posée / regard du dev principal / jugement sans mot.
+Linting rigoureux / chaque espace contrôlé / code propre, austère.
+Une dépendance / non mise à jour depuis 10 ans / pèse sur mes nuits.
+Python doux serpent / indentation souveraine / dict joyeux, fluide.
+Stacktrace infini / j’explore les profondeurs / du bug ancestral.
+Versioning cruel / breaking change non documenté / mon app se brise.
+Hotfix de minuit / en prod sans aucun test / dieu du dev, protège.
+Template sans fin / balises dans l’absolu / le HTML chante.
+State mal géré / l’interface se rebelle / React en panique.
+Mémoire s’épuise / fuite dans le flot discret / garbage collector ?
+Legacy immonde / code d’un autre temps, mystère / refonte ou mort.
+Ajout d’un feature / l’effet papillon gronde / tests à réécrire.
+Constante magique / perdue sans explication / nomme-la enfin.
+Design pattern pur / singleton ou observer ? / sagesse du code.
+Une ligne en trop / tout le système vacille / rollback immédiat.
+Prompt du terminal / je parle et l’univers plie / chmod me répond.
+Cryptage sacré / bits dansent sans révéler / le cœur des données.
+Code d’exception / try attrape et enfin / le programme vit.
+Pull accepté / code relu sans commentaire / étrange victoire.
+Code review acerbe / chaque ligne jugée, pesée / j’apprends en douleur.
+Sprint terminé / tout reste encore à finir / planning mensonger.
+Réseau distant / latence comme une brume / front se fige net.
+Environnement / variable oubliée / chaos assuré.
+Clavier azerty / mes raccourcis inversés / muscle memory.
+Nœud dans le backend / les logs crient leur souffrance / je remonte lent.
+Syntax error / le message me fixe droit / il sait que j’ai peur.
+Build qui réussit / la lumière dans mes yeux / déploiement heureux.
+Documentation / je lis mes propres écrits / rien ne fait de sens.
+Daily stand-up / chacun ment un peu, beaucoup / la tâche avance peu.
+Version mineure ? / elle détruit tout mon système / SemVer en traître.
+Null pointer cruel / il attend dans l’ombre / mon if trop confiant.
+Dépendances floues / dans package.json / jungle à dompter.
+Buffer overflow / la mémoire pleure en silence / C rit dans l’ombre.
+Réseau sans pitié / timeout comme une tempête / réponse trop tard.
+Webhook inattendu / data surgit sans crier / bug de l’aube.
+User impatient / charge lente comme l’hiver / UX assassin.
+Console.log / dernier espoir du dev / lumière du bug.
+Prompt génératif / IA complète mes mots / peur et fascination.
+Un test flanchera / le plus vieux, le plus ancien / mal dormant du code.
+Protocole étrange / handshake incompris / serveur indécis.
+Cloud omniscient / mes fichiers entre ses mains / illusion de paix.
+Sprint planifié / backlog comme un roman / tickets en errance.
+UX designer / courbe d’usage bien tracée / dev râle mais s’incline.
+Classe abstraite, fière / jamais instanciée / reine du concept.
+Lint me corrige / des virgules oubliées / l’humilité vient.
+Merge en fin de nuit / résolu sans un regard / je pleure demain.
+Docker build trop long / café coulé, froid déjà / image jamais née.
+Répétition ? Non / DRY dicte mes actions / fonction générique.
+Shell script bancal / l’environnement tremble / chmod +x.
+Jeton expiré / l’API ne veut plus / authentification.
+Bloc try sans catch / destin entre les doigts / exception levée.
+Serveur redémarre / il oublie mon existence / logs effacés.
+Code minifié / illisible à jamais / beauté cachée.
+Sprint de dernière heure / code pressé dans l’urgence / dette technique.
+Je code en silence / monde éteint, l’écran s’éclaire / boucle de minuit.
+ChatGPT m’aide / je lui parle de mon bug / réponse posée.
+Async await / danse temporelle étrange / promesse tenue.
+Vue ou React ? / le cœur des devs s’enflamme / flamewar en forum.
+JS transpile / Babel transforme le flux / l’histoire du code.
+Code spaghetti / chaque appel mène au chaos / refacto urgent.
+Version finale / nommée "final-final" / jusqu’au prochain bug.
+Environnement / dev, staging, prod en folie / où suis-je vraiment ?
+Code bien commenté / passé parle à l’avenir / gratitude pure.
+Prompt dans VSCode / l’auto-complétion fuse / futur en éclat.
+Cercle éternel / écrire, casser, relire / programmer, rêver.
+Push sur master / sans relecture, sans peur / dieu me pardonne.
