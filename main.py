@@ -8,7 +8,7 @@ from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage
-from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_chroma import Chroma
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_core.documents import Document
 from haikus import haikus
@@ -46,8 +46,6 @@ if __name__ == "__main__":
     haiku_subparser.add_argument("--verbose", "-v", action="store_true")
     
     args = parser.parse_args()
-    
-
 
     if args.mode == "haiku":
 
@@ -60,13 +58,10 @@ if __name__ == "__main__":
         embeddings = OllamaEmbeddings(model=embeddings_model)
 
         # Create vector store
-        vector_store = InMemoryVectorStore(embedding=embeddings)
-
-        # Create documents
-        documents = [Document(page_content=haiku) for haiku in haikus]
-
-        # Add documents to vector store
-        vector_store.add_documents(documents)
+        vector_store = Chroma(
+            embedding_function=embeddings,
+            persist_directory=os.getenv("VECTOR_STORE_DATA")
+        )
 
         while True:
             user_input = console.input(HUMAN_PROMPT_PREFIX)

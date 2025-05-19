@@ -1,5 +1,6 @@
 langchain
 langchain-ollama
+langchain-chroma
 rich
 python-dotenv
 numpy
