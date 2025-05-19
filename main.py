@@ -8,6 +8,10 @@ from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_ollama.embeddings import OllamaEmbeddings
+from langchain_core.documents import Document
+from haikus import haikus
 
 load_dotenv()
 
@@ -29,42 +33,81 @@ if __name__ == "__main__":
 
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="llama3.2:3b")
-    parser.add_argument("--system", type=str, default="default")
-    parser.add_argument("--verbose", "-v", action="store_true")
+    subparser = parser.add_subparsers(dest="mode", required=True)
 
+    # add chat subparser
+    chat_subparser = subparser.add_parser("chat")
+    chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
+    chat_subparser.add_argument("--system", type=str, default="default")
+    chat_subparser.add_argument("--verbose", "-v", action="store_true")
+    
+    # add haiku subparser
+    haiku_subparser = subparser.add_parser("haiku")
+    haiku_subparser.add_argument("--verbose", "-v", action="store_true")
+    
     args = parser.parse_args()
+    
 
-    # Read system prompt
-    system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
-    with open(system_prompt_path, "r") as f:
-        system_prompt = f.read()
 
-    # Load model
-    if args.verbose:
-        print(f"Loading model {args.model}...")
+    if args.mode == "haiku":
 
-    model = init_chat_model(args.model, model_provider="ollama", temperature=1)
+        embeddings_model = "mxbai-embed-large:latest"
 
-    # Create prompt
-    prompt = ChatPromptTemplate.from_messages([
-        SystemMessagePromptTemplate.from_template(system_prompt),
-        MessagesPlaceholder(variable_name="messages"),
-    ])
+        # Load model
+        if args.verbose:
+            print(f"Loading model {embeddings_model}...")
 
-    # Create chain
-    chain = prompt | model | StrOutputParser()
+        embeddings = OllamaEmbeddings(model=embeddings_model)
 
-    # Display optional informations
-    if args.verbose:
-        console.print(SYSTEM_PROMPT_PREFIX + system_prompt, end="")
+        # Create vector store
+        vector_store = InMemoryVectorStore(embedding=embeddings)
 
-    # Print system prompt
-    while True:
-        user_input = console.input(HUMAN_PROMPT_PREFIX)
+        # Create documents
+        documents = [Document(page_content=haiku) for haiku in haikus]
 
-        console.print(BOT_PROMPT_PREFIX, end="")
-        stream = chain.stream({"messages": [HumanMessage(user_input)]})
-        for chunk in stream:
-            console.print(chunk, end="")
-        print()
+        # Add documents to vector store
+        vector_store.add_documents(documents)
+
+        while True:
+            user_input = console.input(HUMAN_PROMPT_PREFIX)
+
+            console.print(BOT_PROMPT_PREFIX, end="")
+            response = vector_store.similarity_search(query=user_input, k=1)
+            console.print(response[0].page_content)
+        
+
+    elif args.mode == "chat":
+
+        # Read system prompt
+        system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
+        with open(system_prompt_path, "r") as f:
+            system_prompt = f.read()
+
+        # Load model
+        if args.verbose:
+            print(f"Loading model {args.model}...")
+
+        model = init_chat_model(args.model, model_provider="ollama", temperature=1)
+
+        # Create prompt
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(system_prompt),
+            MessagesPlaceholder(variable_name="messages"),
+        ])
+
+        # Create chain
+        chain = prompt | model | StrOutputParser()
+
+        # Display optional informations
+        if args.verbose:
+            console.print(SYSTEM_PROMPT_PREFIX + system_prompt, end="")
+
+        # Print system prompt
+        while True:
+            user_input = console.input(HUMAN_PROMPT_PREFIX)
+
+            console.print(BOT_PROMPT_PREFIX, end="")
+            stream = chain.stream({"messages": [HumanMessage(user_input)]})
+            for chunk in stream:
+                console.print(chunk, end="")
+            print()
