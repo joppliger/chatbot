@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-
 import argparse
 import signal
 import os
+from dotenv import load_dotenv  
 from rich.console import Console
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage
 
-if __name__ == "__main__":
+load_dotenv()
 
+if __name__ == "__main__":
     # Define constants
-    PROMPTS_DIR = "/var/chatbot/prompts"
     SYSTEM_PROMPT_PREFIX = "[bright_black][[/][bold bright_magenta]system[/][bright_black]]:[/]\n"
     HUMAN_PROMPT_PREFIX = "[bright_black][[/][bold bright_green]human[/][bright_black]]:[/]\n"
     BOT_PROMPT_PREFIX = "[bright_black][[/][bold bright_blue]bot[/][bright_black]]:[/]\n"
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read system prompt
-    system_prompt_path = os.path.join(PROMPTS_DIR, f"system/{args.system}.txt")
+    system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
     with open(system_prompt_path, "r") as f:
         system_prompt = f.read()
 
