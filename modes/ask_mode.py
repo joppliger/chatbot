@@ -57,7 +57,7 @@ class AskMode(Mode):
 
         # Display optional informations
         if self.verbose:
-            self.console.system_output(self.system)
+            self.console.system_output(system_prompt)
 
         # Print system prompt
         user_input = self.console.human_input()
