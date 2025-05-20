@@ -11,8 +11,8 @@ class LoadHaikuMode(Mode):
         console: Console, 
         verbose: bool = False,
         file: str = None):
-
         super().__init__(console)
+
         self.verbose = verbose
         self.file = file
 

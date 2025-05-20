@@ -15,12 +15,14 @@ class AskMode(Mode):
         model: str = "llama3.2:3b",
         system: str = "default", 
         out: str|None = None,
+        data: list[str]|None = None,
         verbose: bool = False):
         super().__init__(console)
 
         self.model = model
         self.system = system
         self.out = out
+        self.data = data
         self.verbose = verbose
 
     @staticmethod
@@ -30,6 +32,7 @@ class AskMode(Mode):
         chat_subparser.add_argument("--system", type=str, default="default")
         chat_subparser.add_argument("--verbose", "-v", action="store_true")
         chat_subparser.add_argument("--out", type=str, default=None)
+        chat_subparser.add_argument("--data", "-d", action="append", type=str, default=None)
 
     def run(self):
         # Read system prompt
@@ -46,23 +49,40 @@ class AskMode(Mode):
             model_provider="ollama", 
             temperature=1)
 
+        # Parse data
+        system_data = {}
+        if self.data:
+            for data in self.data:
+                key, value = data.split("=")
+                system_data[key] = value
+                if self.verbose:
+                    self.console.info(f"Data: {key}: {value}")
+
+        # Display optional informations
+        if self.verbose:
+            self.console.system_output(system_prompt)
+
+        system_prompt = SystemMessagePromptTemplate.from_template(system_prompt)
+
+        try:
+            system_prompt_with_data = system_prompt.format(**system_data)
+        except Exception as e:
+            self.console.error(f"System prompt require additional data : {e}")
+            return
+
         # Create prompt
         prompt = ChatPromptTemplate.from_messages([
-            SystemMessagePromptTemplate.from_template(system_prompt),
+            system_prompt_with_data,
             HumanMessagePromptTemplate.from_template("{request}"),
         ])
 
         # Create chain
         chain = prompt | model | StrOutputParser()
 
-        # Display optional informations
-        if self.verbose:
-            self.console.system_output(system_prompt)
-
         # Print system prompt
         user_input = self.console.human_input()
 
-        stream = chain.stream({"request": user_input})
+        stream = chain.stream({"request": user_input })
 
         self.console.bot_start()
 

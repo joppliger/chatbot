@@ -10,8 +10,8 @@ class HaikuMode(Mode):
         self, 
         console: Console, 
         verbose: bool = False):
-
         super().__init__(console)
+        
         self.verbose = verbose
 
     @staticmethod
