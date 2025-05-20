@@ -2,25 +2,25 @@ import os
 from mode import Mode
 from console import Console
 from argparse import _SubParsersAction
-from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import SystemMessagePromptTemplate
+from langchain_core.prompts import HumanMessagePromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain.chat_models import init_chat_model
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
-class ChatMode(Mode):
-
-    history: list[BaseMessage] = []
-
+class AskMode(Mode):
     def __init__(
         self, 
         console: Console,
         model: str = "llama3.2:3b",
         system: str = "default", 
+        out: str|None = None,
         verbose: bool = False):
         super().__init__(console)
 
         self.model = model
         self.system = system
+        self.out = out
         self.verbose = verbose
 
     @staticmethod
@@ -29,6 +29,7 @@ class ChatMode(Mode):
         chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
         chat_subparser.add_argument("--system", type=str, default="default")
         chat_subparser.add_argument("--verbose", "-v", action="store_true")
+        chat_subparser.add_argument("--out", type=str, default=None)
 
     def run(self):
         # Read system prompt
@@ -48,7 +49,7 @@ class ChatMode(Mode):
         # Create prompt
         prompt = ChatPromptTemplate.from_messages([
             SystemMessagePromptTemplate.from_template(system_prompt),
-            MessagesPlaceholder(variable_name="messages"),
+            HumanMessagePromptTemplate.from_template("{request}"),
         ])
 
         # Create chain
@@ -59,17 +60,22 @@ class ChatMode(Mode):
             self.console.system_output(self.system)
 
         # Print system prompt
-        while True:
-            user_input = self.console.human_input()
+        user_input = self.console.human_input()
 
-            self.history.append(HumanMessage(user_input))
+        stream = chain.stream({"request": user_input})
 
-            self.console.bot_start()
-            stream = chain.stream({"messages": self.history})
-            bot_message = ""
+        self.console.bot_start()
+
+        if self.out:
+            with open(self.out, "w") as f:
+                for chunk in stream:
+                    f.write(chunk)
+                    self.console.bot_chunk(chunk)
+                f.write("\n")
+        else:
             for chunk in stream:
-                bot_message += chunk
                 self.console.bot_chunk(chunk)
-            self.console.bot_end()
 
-            self.history.append(AIMessage(bot_message))
+        self.console.bot_end()
+
+        

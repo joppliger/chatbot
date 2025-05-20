@@ -11,6 +11,9 @@ class Console(Console):
     def human_input(self) -> str:
         return self.input(HUMAN_PROMPT_PREFIX)
 
+    def bot_output(self, content: str):
+        self.print(BOT_PROMPT_PREFIX + content)
+
     def bot_start(self):
         self.print(BOT_PROMPT_PREFIX, end="")
     

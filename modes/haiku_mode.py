@@ -1,6 +1,5 @@
-from argparse import _SubParsersAction
 import os
-
+from argparse import _SubParsersAction
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from mode import Mode

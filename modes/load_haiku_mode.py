@@ -1,11 +1,9 @@
-from argparse import _SubParsersAction
 import os
-
+from argparse import _SubParsersAction
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from console import Console
 from mode import Mode
-
 
 class LoadHaikuMode(Mode):
     def __init__(

@@ -1,20 +1,12 @@
 #!/usr/bin/env python3
-import argparse
 import signal
-import os
-from dotenv import load_dotenv  
+from dotenv import load_dotenv
 from console import Console
-from langchain.chat_models import init_chat_model
-from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.messages import HumanMessage
-from langchain_chroma import Chroma
-from langchain_ollama.embeddings import OllamaEmbeddings
-from langchain_core.documents import Document
 from modes.chat_mode import ChatMode
 from modes.haiku_mode import HaikuMode
 from app import App
 from modes.load_haiku_mode import LoadHaikuMode
+from modes.ask_mode import AskMode
 
 load_dotenv()
 
@@ -24,160 +16,19 @@ if __name__ == "__main__":
 
     # Define signal handler
     def sigkill_handler(sig, frame):
-        console.bot_start()
-        console.bot_chunk("Au revoir humain!")
-        console.bot_end()
+        console.print()
+        console.bot_output("Au revoir humain!")
         exit(0)
 
     signal.signal(signal.SIGINT, sigkill_handler)
     signal.signal(signal.SIGTERM, sigkill_handler)
 
+    # Setup app
     app = App(console=console)
 
     app.use("chat", ChatMode)
+    app.use("ask", AskMode)
     app.use("haiku", HaikuMode)
     app.use("load-haiku", LoadHaikuMode)
 
     app.run()
-
-    # # Parse arguments
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # parser = argparse.ArgumentParser()
-    # subparser = parser.add_subparsers(dest="mode", required=True)
-
-    # ChatMode.add_subparser(subparser)
-
-    # args = parser.parse_args()
-
-    # chat_mode = ChatMode(
-    #     console, 
-    #     args.model, 
-    #     args.system, 
-    #     args.verbose)
-    
-    # if args.mode == 'chat':
-    #     chat_mode.run()
-
-    # # add chat subparser
-    # chat_subparser = subparser.add_parser("chat")
-    # chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
-    # chat_subparser.add_argument("--system", type=str, default="default")
-    # chat_subparser.add_argument("--verbose", "-v", action="store_true")
-    
-    # # add haiku subparser
-    # haiku_subparser = subparser.add_parser("haiku")
-    # haiku_subparser.add_argument("--verbose", "-v", action="store_true")
-
-    # # add load-haiku subparser
-    # load_haiku_subparser = subparser.add_parser("load-haiku")
-    # load_haiku_subparser.add_argument("--verbose", "-v", action="store_true")
-    # load_haiku_subparser.add_argument("--file", type=str, default=None)
-
-    # args = parser.parse_args()
-
-    # if args.mode == "load-haiku":
-    #     # Load embedding model
-    #     embeddings_model = os.getenv("EMBEDDING_MODEL")
-
-    #     if args.verbose:
-    #         print(f"Loading embedding model {embeddings_model}...")
-
-    #     embeddings = OllamaEmbeddings(model=embeddings_model)
-
-    #     # Create vector store
-    #     vector_store = Chroma(
-    #         embedding_function=embeddings,
-    #         persist_directory=os.getenv("VECTOR_STORE_DATA")
-    #     )
-
-    #     if args.file:
-    #         with open(args.file, "r") as f:
-    #             haikus = f.readlines()
-
-    #         for haiku in haikus:
-    #             vector_store.add_texts([haiku])
-
-    #         console.print(f"{len(haikus)} haikus added to vector store.")
-
-    #     else:
-    #         while True:
-    #             user_input = console.input(HUMAN_PROMPT_PREFIX)
-    #             vector_store.add_texts([user_input])
-
-    #             if args.verbose:
-    #                 console.print(BOT_PROMPT_PREFIX, end="")
-    #                 console.print(f"Haiku added to vector store.")
-
-    # elif args.mode == "haiku":
-    #     # Load embedding model
-    #     embeddings_model = os.getenv("EMBEDDING_MODEL")
-
-    #     if args.verbose:
-    #         print(f"Loading embedding model {embeddings_model}...")
-
-    #     embeddings = OllamaEmbeddings(model=embeddings_model)
-
-    #     # Create vector store
-    #     vector_store = Chroma(
-    #         embedding_function=embeddings,
-    #         persist_directory=os.getenv("VECTOR_STORE_DATA")
-    #     )
-
-    #     while True:
-    #         user_input = console.input(HUMAN_PROMPT_PREFIX)
-
-    #         console.print(BOT_PROMPT_PREFIX, end="")
-    #         response = vector_store.similarity_search(query=user_input, k=1)
-    #         if len(response) == 0:
-    #             console.print("Je ne connais aucun haiku ¯\\_(ツ)_/¯")
-    #             continue
-
-    #         console.print(response[0].page_content, end="")
-        
-    # elif args.mode == "chat":
-
-    #     # Read system prompt
-    #     system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
-    #     with open(system_prompt_path, "r") as f:
-    #         system_prompt = f.read()
-
-    #     # Load model
-    #     if args.verbose:
-    #         print(f"Loading model {args.model}...")
-
-    #     model = init_chat_model(args.model, model_provider="ollama", temperature=1)
-
-    #     # Create prompt
-    #     prompt = ChatPromptTemplate.from_messages([
-    #         SystemMessagePromptTemplate.from_template(system_prompt),
-    #         MessagesPlaceholder(variable_name="messages"),
-    #     ])
-
-    #     # Create chain
-    #     chain = prompt | model | StrOutputParser()
-
-    #     # Display optional informations
-    #     if args.verbose:
-    #         console.print(SYSTEM_PROMPT_PREFIX + system_prompt, end="")
-
-    #     # Print system prompt
-    #     while True:
-    #         user_input = console.input(HUMAN_PROMPT_PREFIX)
-
-    #         console.print(BOT_PROMPT_PREFIX, end="")
-    #         stream = chain.stream({"messages": [HumanMessage(user_input)]})
-    #         for chunk in stream:
-    #             console.print(chunk, end="")
-    #         print()
