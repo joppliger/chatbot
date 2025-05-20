@@ -26,7 +26,7 @@ class LoadHaikuMode(Mode):
         embeddings_model = os.getenv("EMBEDDING_MODEL")
 
         if self.verbose:
-            print(f"Loading embedding model {embeddings_model}...")
+            self.console.info(f"Loading embedding model {embeddings_model}...")
 
         embeddings = OllamaEmbeddings(model=embeddings_model)
 
@@ -45,7 +45,7 @@ class LoadHaikuMode(Mode):
             for haiku in haikus:
                 vector_store.add_texts([haiku])
 
-            self.console.print(f"{len(haikus)} haikus added to vector store.")
+            self.console.info(f"{len(haikus)} haikus added to vector store.")
 
         else:
             while True:

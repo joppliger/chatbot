@@ -39,7 +39,7 @@ class AskMode(Mode):
 
         # Load model
         if self.verbose:
-            self.console.print(f"Loading model {self.model}...")
+            self.console.info(f"Loading model {self.model}...")
 
         model = init_chat_model(
             self.model, 
@@ -77,5 +77,8 @@ class AskMode(Mode):
                 self.console.bot_chunk(chunk)
 
         self.console.bot_end()
+
+        if self.verbose:
+            self.console.info(f"Output saved to {self.out}")
 
         

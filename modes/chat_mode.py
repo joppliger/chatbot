@@ -38,7 +38,7 @@ class ChatMode(Mode):
 
         # Load model
         if self.verbose:
-            self.console.print(f"Loading model {self.model}...")
+            self.console.info(f"Loading model {self.model}...")
 
         model = init_chat_model(
             self.model, 

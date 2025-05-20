@@ -5,6 +5,10 @@ BOT_PROMPT_PREFIX = "[bright_black][[/][bold bright_blue]bot[/][bright_black]]:[
 from rich.console import Console
 
 class Console(Console):
+
+    def info(self, content: str):
+        self.print(f"[bright_black]\[info]: {content}[/]")
+
     def system_output(self, content: str):
         self.print(SYSTEM_PROMPT_PREFIX + content)
 

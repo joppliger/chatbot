@@ -24,7 +24,7 @@ class HaikuMode(Mode):
         embeddings_model = os.getenv("EMBEDDING_MODEL")
 
         if self.verbose:
-            print(f"Loading embedding model {embeddings_model}...")
+            self.console.info(f"Loading embedding model {embeddings_model}...")
 
         embeddings = OllamaEmbeddings(model=embeddings_model)
 
