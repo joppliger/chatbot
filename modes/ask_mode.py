@@ -98,7 +98,7 @@ class AskMode(Mode):
 
         self.console.bot_end()
 
-        if self.verbose:
+        if self.verbose and self.out:
             self.console.info(f"Output saved to {self.out}")
 
         

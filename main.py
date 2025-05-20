@@ -5,6 +5,7 @@ from console import Console
 from modes.chat_mode import ChatMode
 from modes.haiku_mode import HaikuMode
 from app import App
+from modes.load_book_mode import LoadBookMode
 from modes.load_haiku_mode import LoadHaikuMode
 from modes.ask_mode import AskMode
 
@@ -30,5 +31,6 @@ if __name__ == "__main__":
     app.use("ask", AskMode)
     app.use("haiku", HaikuMode)
     app.use("load-haiku", LoadHaikuMode)
+    app.use("load-book", LoadBookMode)
 
     app.run()
