@@ -3,7 +3,7 @@ import argparse
 import signal
 import os
 from dotenv import load_dotenv  
-from rich.console import Console
+from console import Console
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
@@ -11,138 +11,173 @@ from langchain_core.messages import HumanMessage
 from langchain_chroma import Chroma
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_core.documents import Document
+from modes.chat_mode import ChatMode
+from modes.haiku_mode import HaikuMode
+from app import App
+from modes.load_haiku_mode import LoadHaikuMode
 
 load_dotenv()
 
 if __name__ == "__main__":
-    # Define constants
-    SYSTEM_PROMPT_PREFIX = "[bright_black][[/][bold bright_magenta]system[/][bright_black]]:[/]\n"
-    HUMAN_PROMPT_PREFIX = "[bright_black][[/][bold bright_green]human[/][bright_black]]:[/]\n"
-    BOT_PROMPT_PREFIX = "[bright_black][[/][bold bright_blue]bot[/][bright_black]]:[/]\n"
-
     # Initialize console
     console = Console()
 
     # Define signal handler
     def sigkill_handler(sig, frame):
-        console.print(f"\n{BOT_PROMPT_PREFIX}Au revoir humain!")
+        console.bot_start()
+        console.bot_chunk("Au revoir humain!")
+        console.bot_end()
         exit(0)
 
     signal.signal(signal.SIGINT, sigkill_handler)
     signal.signal(signal.SIGTERM, sigkill_handler)
 
-    # Parse arguments
-    parser = argparse.ArgumentParser()
-    subparser = parser.add_subparsers(dest="mode", required=True)
+    app = App(console=console)
 
-    # add chat subparser
-    chat_subparser = subparser.add_parser("chat")
-    chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
-    chat_subparser.add_argument("--system", type=str, default="default")
-    chat_subparser.add_argument("--verbose", "-v", action="store_true")
+    app.use("chat", ChatMode)
+    app.use("haiku", HaikuMode)
+    app.use("load-haiku", LoadHaikuMode)
+
+    app.run()
+
+    # # Parse arguments
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # parser = argparse.ArgumentParser()
+    # subparser = parser.add_subparsers(dest="mode", required=True)
+
+    # ChatMode.add_subparser(subparser)
+
+    # args = parser.parse_args()
+
+    # chat_mode = ChatMode(
+    #     console, 
+    #     args.model, 
+    #     args.system, 
+    #     args.verbose)
     
-    # add haiku subparser
-    haiku_subparser = subparser.add_parser("haiku")
-    haiku_subparser.add_argument("--verbose", "-v", action="store_true")
+    # if args.mode == 'chat':
+    #     chat_mode.run()
 
-    # add load-haiku subparser
-    load_haiku_subparser = subparser.add_parser("load-haiku")
-    load_haiku_subparser.add_argument("--verbose", "-v", action="store_true")
-    load_haiku_subparser.add_argument("--file", type=str, default=None)
+    # # add chat subparser
+    # chat_subparser = subparser.add_parser("chat")
+    # chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
+    # chat_subparser.add_argument("--system", type=str, default="default")
+    # chat_subparser.add_argument("--verbose", "-v", action="store_true")
+    
+    # # add haiku subparser
+    # haiku_subparser = subparser.add_parser("haiku")
+    # haiku_subparser.add_argument("--verbose", "-v", action="store_true")
 
-    args = parser.parse_args()
+    # # add load-haiku subparser
+    # load_haiku_subparser = subparser.add_parser("load-haiku")
+    # load_haiku_subparser.add_argument("--verbose", "-v", action="store_true")
+    # load_haiku_subparser.add_argument("--file", type=str, default=None)
 
-    if args.mode == "load-haiku":
-        # Load embedding model
-        embeddings_model = os.getenv("EMBEDDING_MODEL")
+    # args = parser.parse_args()
 
-        if args.verbose:
-            print(f"Loading embedding model {embeddings_model}...")
+    # if args.mode == "load-haiku":
+    #     # Load embedding model
+    #     embeddings_model = os.getenv("EMBEDDING_MODEL")
 
-        embeddings = OllamaEmbeddings(model=embeddings_model)
+    #     if args.verbose:
+    #         print(f"Loading embedding model {embeddings_model}...")
 
-        # Create vector store
-        vector_store = Chroma(
-            embedding_function=embeddings,
-            persist_directory=os.getenv("VECTOR_STORE_DATA")
-        )
+    #     embeddings = OllamaEmbeddings(model=embeddings_model)
 
-        if args.file:
-            with open(args.file, "r") as f:
-                haikus = f.readlines()
+    #     # Create vector store
+    #     vector_store = Chroma(
+    #         embedding_function=embeddings,
+    #         persist_directory=os.getenv("VECTOR_STORE_DATA")
+    #     )
 
-            for haiku in haikus:
-                vector_store.add_texts([haiku])
+    #     if args.file:
+    #         with open(args.file, "r") as f:
+    #             haikus = f.readlines()
 
-            console.print(f"{len(haikus)} haikus added to vector store.")
+    #         for haiku in haikus:
+    #             vector_store.add_texts([haiku])
 
-        else:
-            while True:
-                user_input = console.input(HUMAN_PROMPT_PREFIX)
-                vector_store.add_texts([user_input])
+    #         console.print(f"{len(haikus)} haikus added to vector store.")
 
-                if args.verbose:
-                    console.print(BOT_PROMPT_PREFIX, end="")
-                    console.print(f"Haiku added to vector store.")
+    #     else:
+    #         while True:
+    #             user_input = console.input(HUMAN_PROMPT_PREFIX)
+    #             vector_store.add_texts([user_input])
 
-    elif args.mode == "haiku":
-        # Load embedding model
-        embeddings_model = os.getenv("EMBEDDING_MODEL")
+    #             if args.verbose:
+    #                 console.print(BOT_PROMPT_PREFIX, end="")
+    #                 console.print(f"Haiku added to vector store.")
 
-        if args.verbose:
-            print(f"Loading embedding model {embeddings_model}...")
+    # elif args.mode == "haiku":
+    #     # Load embedding model
+    #     embeddings_model = os.getenv("EMBEDDING_MODEL")
 
-        embeddings = OllamaEmbeddings(model=embeddings_model)
+    #     if args.verbose:
+    #         print(f"Loading embedding model {embeddings_model}...")
 
-        # Create vector store
-        vector_store = Chroma(
-            embedding_function=embeddings,
-            persist_directory=os.getenv("VECTOR_STORE_DATA")
-        )
+    #     embeddings = OllamaEmbeddings(model=embeddings_model)
 
-        while True:
-            user_input = console.input(HUMAN_PROMPT_PREFIX)
+    #     # Create vector store
+    #     vector_store = Chroma(
+    #         embedding_function=embeddings,
+    #         persist_directory=os.getenv("VECTOR_STORE_DATA")
+    #     )
 
-            console.print(BOT_PROMPT_PREFIX, end="")
-            response = vector_store.similarity_search(query=user_input, k=1)
-            if len(response) == 0:
-                console.print("Je ne connais aucun haiku ¯\\_(ツ)_/¯")
-                continue
+    #     while True:
+    #         user_input = console.input(HUMAN_PROMPT_PREFIX)
 
-            console.print(response[0].page_content, end="")
+    #         console.print(BOT_PROMPT_PREFIX, end="")
+    #         response = vector_store.similarity_search(query=user_input, k=1)
+    #         if len(response) == 0:
+    #             console.print("Je ne connais aucun haiku ¯\\_(ツ)_/¯")
+    #             continue
+
+    #         console.print(response[0].page_content, end="")
         
-    elif args.mode == "chat":
+    # elif args.mode == "chat":
 
-        # Read system prompt
-        system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
-        with open(system_prompt_path, "r") as f:
-            system_prompt = f.read()
+    #     # Read system prompt
+    #     system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{args.system}.txt")
+    #     with open(system_prompt_path, "r") as f:
+    #         system_prompt = f.read()
 
-        # Load model
-        if args.verbose:
-            print(f"Loading model {args.model}...")
+    #     # Load model
+    #     if args.verbose:
+    #         print(f"Loading model {args.model}...")
 
-        model = init_chat_model(args.model, model_provider="ollama", temperature=1)
+    #     model = init_chat_model(args.model, model_provider="ollama", temperature=1)
 
-        # Create prompt
-        prompt = ChatPromptTemplate.from_messages([
-            SystemMessagePromptTemplate.from_template(system_prompt),
-            MessagesPlaceholder(variable_name="messages"),
-        ])
+    #     # Create prompt
+    #     prompt = ChatPromptTemplate.from_messages([
+    #         SystemMessagePromptTemplate.from_template(system_prompt),
+    #         MessagesPlaceholder(variable_name="messages"),
+    #     ])
 
-        # Create chain
-        chain = prompt | model | StrOutputParser()
+    #     # Create chain
+    #     chain = prompt | model | StrOutputParser()
 
-        # Display optional informations
-        if args.verbose:
-            console.print(SYSTEM_PROMPT_PREFIX + system_prompt, end="")
+    #     # Display optional informations
+    #     if args.verbose:
+    #         console.print(SYSTEM_PROMPT_PREFIX + system_prompt, end="")
 
-        # Print system prompt
-        while True:
-            user_input = console.input(HUMAN_PROMPT_PREFIX)
+    #     # Print system prompt
+    #     while True:
+    #         user_input = console.input(HUMAN_PROMPT_PREFIX)
 
-            console.print(BOT_PROMPT_PREFIX, end="")
-            stream = chain.stream({"messages": [HumanMessage(user_input)]})
-            for chunk in stream:
-                console.print(chunk, end="")
-            print()
+    #         console.print(BOT_PROMPT_PREFIX, end="")
+    #         stream = chain.stream({"messages": [HumanMessage(user_input)]})
+    #         for chunk in stream:
+    #             console.print(chunk, end="")
+    #         print()
