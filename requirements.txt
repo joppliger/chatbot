@@ -1,6 +1,10 @@
 langchain
 langchain-ollama
+langchain-openai
 langchain-chroma
+langchain_community 
+langchain_experimental
 rich
 python-dotenv
 numpy
+pypdf
