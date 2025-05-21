@@ -10,6 +10,8 @@ from modes.load_book_mode import LoadBookMode
 from modes.load_haiku_mode import LoadHaikuMode
 from modes.ask_mode import AskMode
 
+from modes.load_legal_provisions_mode import LoadLegalProvisionsMode
+
 load_dotenv()
 
 if __name__ == "__main__":
@@ -30,9 +32,13 @@ if __name__ == "__main__":
 
     app.use("chat", ChatMode)
     app.use("ask", AskMode)
+
     app.use("haiku", HaikuMode)
     app.use("load-haiku", LoadHaikuMode)
-    app.use("load-book", LoadBookMode)
+
     app.use("book", BookMode)
+    app.use("load-book", LoadBookMode)
+
+    app.use("load-legal-provisions", LoadLegalProvisionsMode)
 
     app.run()
