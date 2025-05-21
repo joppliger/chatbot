@@ -100,5 +100,3 @@ class AskMode(Mode):
 
         if self.verbose and self.out:
             self.console.info(f"Output saved to {self.out}")
-
-        
