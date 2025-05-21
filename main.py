@@ -2,6 +2,7 @@
 import signal
 from dotenv import load_dotenv
 from console import Console
+from modes.book_mode import BookMode
 from modes.chat_mode import ChatMode
 from modes.haiku_mode import HaikuMode
 from app import App

@@ -56,7 +56,7 @@ class ChatMode(Mode):
 
         # Display optional informations
         if self.verbose:
-            self.console.system_output(self.system)
+            self.console.system_output(system_prompt)
 
         # Print system prompt
         while True:
