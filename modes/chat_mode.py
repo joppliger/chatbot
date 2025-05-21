@@ -14,7 +14,7 @@ class ChatMode(Mode):
     def __init__(
         self, 
         console: Console,
-        model: str = "llama3.2:3b",
+        model: str = "llama3.2:1b",
         system: str = "default", 
         verbose: bool = False):
         super().__init__(console)
@@ -26,7 +26,7 @@ class ChatMode(Mode):
     @staticmethod
     def add_subparser(name: str, subparser: _SubParsersAction):
         chat_subparser = subparser.add_parser(name)
-        chat_subparser.add_argument("--model", type=str, default="llama3.2:3b")
+        chat_subparser.add_argument("--model", type=str, default="llama3.2:1b")
         chat_subparser.add_argument("--system", type=str, default="default")
         chat_subparser.add_argument("--verbose", "-v", action="store_true")
 
