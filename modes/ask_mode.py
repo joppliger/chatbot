@@ -12,7 +12,7 @@ class AskMode(Mode):
     def __init__(
         self, 
         console: Console,
-        model: str = "llama3.2:3b",
+        model: str = "llama3.2:1b",
         system: str = "default", 
         out: str|None = None,
         data: list[str]|None = None,
