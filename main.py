@@ -2,6 +2,7 @@
 import signal
 from dotenv import load_dotenv
 from console import Console
+from modes.book_mode import BookMode
 from modes.chat_mode import ChatMode
 from modes.haiku_mode import HaikuMode
 from app import App
@@ -32,5 +33,6 @@ if __name__ == "__main__":
     app.use("haiku", HaikuMode)
     app.use("load-haiku", LoadHaikuMode)
     app.use("load-book", LoadBookMode)
+    app.use("book", BookMode)
 
     app.run()

@@ -13,7 +13,7 @@ Indentation folle / Python grince des dents, sévère / tabulations fuient.
 Tiré du sommeil / le bug m’appelait encore / il riait, moqueur. 
 Stack overflow / des âmes perdues en quête / de leur point-virgule. 
 Branches entremêlées / merge conflict comme un duel / je tranche le vrai. 
-Console ouverte / je parle en lignes muettes / le monde répond. 
+Console ouverte / je parsystemle en lignes muettes / le monde répond. 
 Nuit sans une pause / debug, build, et recommence / l’aube est un commit. 
 Clavier effleuré / chaque touche un battement / de cœur numérique. 
 Une simple ligne / fait danser tout un système / poésie du code. 

@@ -37,11 +37,11 @@ class LoadBookMode(Mode):
         # Loading
         text_splitter = SemanticChunker(
             embeddings=OpenAIEmbeddings(),
-
         )
         
         loader = PyPDFLoader(self.book)
         for page in loader.lazy_load():
             chunks = text_splitter.split_documents([page])
             vector_store.add_documents(chunks)
+ 
  
