@@ -8,3 +8,4 @@ rich
 python-dotenv
 numpy
 pypdf
+youtube_transcript_api
