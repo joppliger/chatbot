@@ -2,6 +2,9 @@ from os import path, getenv
 
 from argparse import _SubParsersAction
 
+from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_chroma import Chroma
+
 from mode import Mode
 from console import Console
 from legal_provisions_loader import LegalProvisionsLoader
@@ -28,6 +31,17 @@ class LoadLegalProvisionsMode(Mode):
 
         loader = LegalProvisionsLoader(self.book)
 
-        for chunk in loader.lazy_load():
-            self.console.info(chunk)
-            self.console.print('\n\n\n')
+        embeddings = OpenAIEmbeddings(
+            model = getenv('EMBEDDING_MODEL'),
+            api_key = getenv('OPENAI_API_KEY')
+        )
+
+        vector_store = Chroma(
+            collection_name='legal-provisions',
+            embedding_function=embeddings,
+            persist_directory=getenv('VECTOR_STORE_DATA')
+        )
+
+        for doc in loader.lazy_load():
+            vector_store.add_documents([doc])
+
