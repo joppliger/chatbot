@@ -1,6 +1,11 @@
+import os
 from argparse import _SubParsersAction
 from console import Console
 from mode import Mode
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
 
 class LoadBookMode(Mode):
     def __init__(
@@ -21,3 +26,21 @@ class LoadBookMode(Mode):
 
     def run(self):
         self.console.info(f"Loading book {self.book}...")
+
+        # Create vector store
+        vector_store = Chroma(
+            embedding_function=OpenAIEmbeddings(),
+            persist_directory=os.getenv("VECTOR_STORE_DATA")
+        )
+
+        # Loading
+        text_splitter = SemanticChunker(
+            embeddings=OpenAIEmbeddings(),
+        )
+        
+        loader = PyPDFLoader(self.book)
+        for page in loader.lazy_load():
+            chunks = text_splitter.split_documents([page])
+            vector_store.add_documents(chunks)
+ 
+ 
