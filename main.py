@@ -9,6 +9,7 @@ from app import App
 from modes.load_book_mode import LoadBookMode
 from modes.load_haiku_mode import LoadHaikuMode
 from modes.ask_mode import AskMode
+from modes.doc_mode import DocMode
 from modes.youtube_mode import YoutubeMode
 
 load_dotenv()
@@ -34,6 +35,8 @@ if __name__ == "__main__":
     app.use("haiku", HaikuMode)
     app.use("load-haiku", LoadHaikuMode)
     app.use("load-book", LoadBookMode)
+    app.use("book", BookMode)
+    app.use("doc", DocMode)
     app.use("youtube", YoutubeMode)
 
     app.run()
