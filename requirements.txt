@@ -4,7 +4,6 @@ langchain-openai
 langchain-chroma
 langchain_community 
 langchain_experimental
-langchain-tavily
 rich
 python-dotenv
 numpy

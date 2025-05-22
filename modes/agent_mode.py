@@ -13,7 +13,6 @@ from langchain.agents import tool
 from langchain.agents import AgentExecutor
 from typing import Annotated
 from langchain.agents import create_tool_calling_agent
-from langchain_tavily import TavilySearch
 
 class AgentMode(Mode):
     def __init__(
@@ -33,12 +32,15 @@ class AgentMode(Mode):
         agent_subparser.add_argument("--model", type=str, default=os.getenv("DEFAULT_MODEL"))
 
     def run(self):
-
-        search = TavilySearch(
-            max_results=1,
-            topic="general")
-
-        tools = [search]
+        
+        @tool
+        def multiplication(
+            a: Annotated[int, "un entier à multiplier par b"], 
+            b: Annotated[int, "un entier avec lequel multiplier a"]) -> int:
+            """
+            Cette fonction retourne un entier résultat du produit de l'entier a par l'entier b
+            """
+            return a * b
 
         llm = init_chat_model(
             self.model,
@@ -50,9 +52,9 @@ class AgentMode(Mode):
             MessagesPlaceholder(variable_name='agent_scratchpad')
         ])
 
-        agent = create_tool_calling_agent(llm, tools, prompt=prompt, )
+        agent = create_tool_calling_agent(llm, [multiplication], prompt=prompt)
 
-        agent_executor = AgentExecutor(agent=agent, tools=tools)
+        agent_executor = AgentExecutor(agent=agent, tools=[multiplication])
         
         human_input = self.console.human_input()
 
