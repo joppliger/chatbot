@@ -36,7 +36,7 @@ class AskMode(Mode):
 
     def run(self):
         # Read system prompt
-        system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"system/{self.system}.txt")
+        system_prompt_path = os.path.join(os.getenv("PROMPTS_DIR"), f"{self.system}.txt")
         with open(system_prompt_path, "r") as f:
             system_prompt = f.read()
 
