@@ -31,22 +31,16 @@ class LoadLegalProvisionsMode(Mode):
 
         loader = LegalProvisionsLoader(self.book)
 
-        # embeddings = OpenAIEmbeddings(
-        #     model = getenv('EMBEDDING_MODEL'),
-        #     api_key = getenv('OPENAI_API_KEY')
-        # )
+        embeddings = OpenAIEmbeddings(
+            model = getenv('EMBEDDING_MODEL'),
+            api_key = getenv('OPENAI_API_KEY')
+        )
 
-        # vector_store = Chroma(
-        #     collection_name='legal-provisions',
-        #     embedding_function=embeddings,
-        #     persist_directory=getenv('VECTOR_STORE_DATA')
-        # )
-
-        self.console.error(loader.code)
-        self.console.error(loader.partie)
+        vector_store = Chroma(
+            collection_name='legal-provisions',
+            embedding_function=embeddings,
+            persist_directory=getenv('VECTOR_STORE_DATA')
+        )
 
         for doc in loader.lazy_load():
-            # vector_store.add_documents([doc])
-            self.console.print(doc, '\n\n')
-            self.console.human_input()
-
+            vector_store.add_documents([doc])
