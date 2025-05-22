@@ -10,6 +10,7 @@ from modes.load_book_mode import LoadBookMode
 from modes.load_haiku_mode import LoadHaikuMode
 from modes.ask_mode import AskMode
 
+from modes.legal_provisions_mode import LegalProvisionsMode
 from modes.load_legal_provisions_mode import LoadLegalProvisionsMode
 
 load_dotenv()
@@ -39,6 +40,7 @@ if __name__ == "__main__":
     app.use("book", BookMode)
     app.use("load-book", LoadBookMode)
 
+    app.use("legal-provisions", LegalProvisionsMode)
     app.use("load-legal-provisions", LoadLegalProvisionsMode)
 
     app.run()
