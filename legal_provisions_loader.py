@@ -8,7 +8,7 @@ from langchain_core.documents import Document
 class LegalProvisionsLoader():
     RE_LEVELS = {
         "partie": compile(r'^\s*(Partie [^\n]+)', flags=MULTILINE),
-        "livre": compile(r'^\s*(Livre [^\n]+)', flags=MULTILINE),
+        "livre": compile(r'^(Livre [^\n]+)', flags=MULTILINE),
         "titre": compile(r'^(Titre [^\n]+)', flags=MULTILINE),
         "chapitre": compile(r'^(Chapitre [^\n]+)', flags=MULTILINE),
         "article": compile(r'^(Article [^\n]+)', flags=MULTILINE)
@@ -17,30 +17,19 @@ class LegalProvisionsLoader():
     def __init__(self, file_path: str) -> None:
         self.file_path = file_path
 
-        self.partie, self.livre = self._extract_partie_livre()
+        self.code, self.partie = self._extract_code_partie()
 
-    def _extract_partie_livre(self) -> Tuple[str, str]:
-        partie = livre = None
-
+    def _extract_code_partie(self) -> Tuple[str, str]:
         with open(self.file_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                if not partie:
-                    match = self.RE_LEVELS["partie"].match(line)
-                    if match:
-                        partie = match.group(1).strip()
-                    
-                if not livre:
-                    match = self.RE_LEVELS["livre"].match(line)
-                    if match:
-                        livre = match.group(1).strip()
+            lines = [next(file) for _ in range(3)]
 
-                if partie and livre:
-                    break
+        match = self.RE_LEVELS["partie"].match(lines[2])
             
-        return partie, livre
+        return lines[0].strip(), match.group(1).strip() if match else None
 
     def lazy_load(self) -> Iterator[Document]:
-        hierarchy = {
+        current = {
+            "livre": None,
             "titre": None,
             "chapitre": None,
             "article": None
@@ -48,32 +37,34 @@ class LegalProvisionsLoader():
         buffer = []
 
         def flush():
-            if hierarchy['article'] and buffer:
+            if current['article'] and buffer:
                 yield Document(
                     page_content=''.join(buffer).strip(),
                     metadata={
+                        "code": self.code,
                         "partie": self.partie,
-                        "livre": self.livre,
-                        **hierarchy,
+                        **current,
                         "source": self.file_path
                     }
                 )
         
         with open(self.file_path, 'r', encoding='utf-8') as file:
+            for _ in range(3):
+                next(file)
+
             for line in file:
-                for level in ("titre", "chapitre"):
+                for level in ("livre", "titre", "chapitre"):
                     match = self.RE_LEVELS[level].match(line)
                     if match:
-                        hierarchy[level] = match.group(1).strip()
+                        current[level] = match.group(1).strip()
                         break
                 else:
                     match = self.RE_LEVELS["article"].match(line)
                     if match:
                         yield from flush()
 
-                        hierarchy["article"] = match.group(1).strip()
-                        buffer.clear()
-                        buffer.append(line)
+                        current["article"] = match.group(1).strip()
+                        buffer = [line]
                     else:
                         buffer.append(line)
         
