@@ -32,6 +32,31 @@ class YoutubeMode(Mode):
         self.url = url
         self.transcript = transcript
         self.verbose = verbose
+        self.model = model if model else os.getenv("DEFAULT_MODEL")
+
+        # Initialisation du cache LangChain
+        cache_path = os.path.join(os.path.dirname(os.getenv("CACHE_DIR")), ".langchain.db")
+        if clear_cache and os.path.exists(cache_path):
+            if self.verbose:
+                self.console.info(f"Suppression du cache LangChain ({cache_path})")
+            os.remove(cache_path)
+
+        # Activation du cache LangChain
+        langchain.cache = SQLiteCache(database_path=cache_path)
+        if self.verbose:
+            self.console.info(f"Cache LangChain activé ({cache_path})")
+
+        # Initialisation du cache de résumés
+        self.summaries_cache_dir = os.path.join(os.path.dirname(os.getenv("CACHE_DIR")), "summaries_cache")
+        os.makedirs(self.summaries_cache_dir, exist_ok=True)
+
+        # Si clear_cache est activé, vider aussi le cache des résumés
+        if clear_cache:
+            for file in os.listdir(self.summaries_cache_dir):
+                if file.endswith('.json'):
+                    os.remove(os.path.join(self.summaries_cache_dir, file))
+            if self.verbose:
+                self.console.info(f"Cache des résumés vidéo vidé")
 
     @staticmethod
     def add_subparser(name: str, subparser: _SubParsersAction):
@@ -197,7 +222,6 @@ class YoutubeMode(Mode):
         if self.verbose:
             self.console.info(f"Transcription récupérée, chargement du modèle {self.model}...")
 
-        print(self.model)
         model = init_chat_model(
             model=self.model,
             model_provider="ollama",
@@ -217,8 +241,8 @@ class YoutubeMode(Mode):
             HumanMessage(f"Voici la transcription d'une vidéo YouTube :\n\n{transcript_for_summary}\n\nRésume cette vidéo en français, en 10-15 lignes maximum."),
         ])
         resume_chain = resume_prompt | model | StrOutputParser()
-        self.console.bot_start()
         self.console.info("Résumé de la vidéo :")
+        self.console.bot_start()
         resume = ""
         for chunk in resume_chain.stream({}):
             resume += chunk

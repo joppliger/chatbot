@@ -11,6 +11,7 @@ from modes.load_haiku_mode import LoadHaikuMode
 from modes.ask_mode import AskMode
 from modes.doc_mode import DocMode
 from modes.youtube_mode import YoutubeMode
+from modes.agent_mode import AgentMode
 
 load_dotenv()
 
@@ -38,5 +39,6 @@ if __name__ == "__main__":
     app.use("book", BookMode)
     app.use("doc", DocMode)
     app.use("youtube", YoutubeMode)
+    app.use("agent", AgentMode)
 
     app.run()
