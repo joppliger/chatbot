@@ -1,8 +1,9 @@
 .venv
 .env
 .store
-*/__pycache__
+__pycache__
 /venv
-*/cache
-*/summaries_cache
-*/.langchain.db
+/var
+/var/chatbot/cache
+/var/chatbot/cache/summaries_cache
+/var/chatbot/cache/.langchain.db
