@@ -16,7 +16,12 @@ class Console(Console):
         self.print(SYSTEM_PROMPT_PREFIX + content)
 
     def human_input(self) -> str:
-        return self.input(HUMAN_PROMPT_PREFIX)
+        user_input = self.input(HUMAN_PROMPT_PREFIX)
+        if user_input.strip().lower() in ("exit", "quit"):
+            self.info("Fermeture de la discussion. À bientôt !")
+            from main import sigkill_handler
+            sigkill_handler(None, None)
+        return user_input
 
     def bot_output(self, content: str):
         self.print(BOT_PROMPT_PREFIX + content)

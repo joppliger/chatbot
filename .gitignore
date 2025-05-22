@@ -3,3 +3,6 @@
 .store
 */__pycache__
 /venv
+*/cache
+*/summaries_cache
+*/.langchain.db

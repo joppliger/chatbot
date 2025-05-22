@@ -13,15 +13,15 @@ from modes.youtube_mode import YoutubeMode
 
 load_dotenv()
 
-if __name__ == "__main__":
-    # Initialize console
-    console = Console()
+# Initialize console
+console = Console()
+# Define signal handler
+def sigkill_handler(sig, frame):
+    console.bot_output("Au revoir humain!")
+    exit(0)
 
-    # Define signal handler
-    def sigkill_handler(sig, frame):
-        console.print()
-        console.bot_output("Au revoir humain!")
-        exit(0)
+if __name__ == "__main__":
+    
 
     signal.signal(signal.SIGINT, sigkill_handler)
     signal.signal(signal.SIGTERM, sigkill_handler)
