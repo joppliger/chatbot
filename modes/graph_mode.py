@@ -14,7 +14,7 @@ from langchain.agents import AgentExecutor
 from typing import Annotated
 from langchain.agents import create_tool_calling_agent
 
-class AgentMode(Mode):
+class GraphMode(Mode):
     def __init__(
         self, 
         console: Console,
@@ -32,32 +32,4 @@ class AgentMode(Mode):
         agent_subparser.add_argument("--model", type=str, default=os.getenv("DEFAULT_MODEL"))
 
     def run(self):
-        
-        @tool
-        def multiplication(
-            a: Annotated[int, "un entier à multiplier par b"], 
-            b: Annotated[int, "un entier avec lequel multiplier a"]) -> int:
-            """
-            Cette fonction retourne un entier résultat du produit de l'entier a par l'entier b
-            """
-            return a * b
-
-        llm = init_chat_model(
-            self.model,
-            model_provider="ollama")
-        
-        prompt = ChatPromptTemplate.from_messages([
-            SystemMessage(content="You are a helpful assistant."),
-            HumanMessagePromptTemplate.from_template("{input}"),
-        ])
-
-        #agent = create_tool_calling_agent(llm, [multiplication], prompt=prompt)
-        #agent_executor = AgentExecutor(agent=agent, tools=[multiplication])
-
-        chain = prompt | llm.bind_tools([multiplication])
-
-        human_input = self.console.human_input()
-
-        response = chain.invoke({"input": human_input})
-
-        print(response)
+        print("hello world")

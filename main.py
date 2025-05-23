@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from console import Console
 from modes.book_mode import BookMode
 from modes.chat_mode import ChatMode
+from modes.graph_mode import GraphMode
 from modes.haiku_mode import HaikuMode
 from app import App
 from modes.load_book_mode import LoadBookMode
@@ -40,5 +41,6 @@ if __name__ == "__main__":
     app.use("doc", DocMode)
     app.use("youtube", YoutubeMode)
     app.use("agent", AgentMode)
+    app.use("graph", GraphMode)
 
     app.run()
