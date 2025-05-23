@@ -37,28 +37,43 @@ class GraphMode(Mode):
     def chatbot_factory(self, llm: BaseChatModel):
         def chatbot_node(state: list[BaseMessage]) -> BaseMessage:
             prompt = ChatPromptTemplate.from_messages([
-                SystemMessage(content="You are a helpful assistant."),
-                HumanMessagePromptTemplate.from_template("{input}"),
+                SystemMessage(content="Tu es un assistant qui répond aux questions de l'utilisateur."),
+                MessagesPlaceholder("{messages}")
             ])
             
             chain = prompt | llm
-            return chain.invoke({"input": state[0].content})
+            return chain.invoke(state)
         return chatbot_node
 
+    def criticize_factory(self, llm: BaseChatModel):
+        def criticize_node(state: list[BaseMessage]) -> BaseMessage:
+            prompt = ChatPromptTemplate.from_messages([
+                SystemMessage("""
+                    Tu es un copywriter qui maîtrise les bonnes pratiques de rédaction professionnelles.
+                    Tu dois critiquer le ernier message envoyé par l'assistant avant toi à la lumière de tes connaissances en copywriting.
+                """),
+                MessagesPlaceholder("{messages}")
+            ])
+            
+            chain = prompt | llm
+            return chain.invoke(state)    
+        return criticize_node
 
     def run(self):
-
         llm = init_chat_model(
             self.model,
             model_provider="openai")
 
         chatbot_node = self.chatbot_factory(llm)
+        criticize_node = self.criticize_factory(llm)
 
         graph = MessageGraph()
 
         graph.add_node("chatbot", chatbot_node)
+        graph.add_node("criticize", criticize_node)
 
         graph.set_entry_point("chatbot")
+        graph.add_edge("chatbot", "criticize")
         graph.set_finish_point("chatbot")
 
         app = graph.compile()
