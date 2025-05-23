@@ -13,8 +13,9 @@ from langchain.agents import tool
 from langchain.agents import AgentExecutor
 from typing import Annotated
 from langchain.agents import create_tool_calling_agent
-from langgraph.graph import MessagesGraph, START, END
-
+from langgraph.graph import START, END
+from langgraph.graph.message import MessageGraph
+from langchain_core.language_models.chat_models import BaseChatModel
 
 class GraphMode(Mode):
     def __init__(
@@ -32,23 +33,28 @@ class GraphMode(Mode):
         agent_subparser = subparser.add_parser(name, help="Run the agent mode")
         agent_subparser.add_argument("--verbose", "-v", action="store_true")
         agent_subparser.add_argument("--model", type=str, default=os.getenv("DEFAULT_MODEL"))
-
-    def run(self):
-
+    
+    def chatbot_factory(self, llm: BaseChatModel):
         def chatbot_node(state: list[BaseMessage]) -> BaseMessage:
-            llm = init_chat_model(
-                self.model,
-                model_provider="openai")
-            
             prompt = ChatPromptTemplate.from_messages([
                 SystemMessage(content="You are a helpful assistant."),
                 HumanMessagePromptTemplate.from_template("{input}"),
             ])
             
             chain = prompt | llm
-            return chain.invoke({ "input": "Quelle est la capitale de la france" })
+            return chain.invoke({"input": state[0].content})
+        return chatbot_node
 
-        graph = MessagesGraph()
+
+    def run(self):
+
+        llm = init_chat_model(
+            self.model,
+            model_provider="openai")
+
+        chatbot_node = self.chatbot_factory(llm)
+
+        graph = MessageGraph()
 
         graph.add_node("chatbot", chatbot_node)
 
@@ -57,6 +63,8 @@ class GraphMode(Mode):
 
         app = graph.compile()
 
-        response = app.invoke()
+        human_input = self.console.human_input()
+        history = app.invoke(human_input)
 
-        print(response)
+        last_message = history[-1]
+        self.console.bot_output(last_message.content)
