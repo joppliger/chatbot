@@ -46,6 +46,7 @@ class GraphMode(Mode):
         self.model = model
         self.thread = thread
 
+
     @staticmethod
     def add_subparser(name: str, subparser: _SubParsersAction):
         agent_subparser = subparser.add_parser(name, help="Run the agent mode")
