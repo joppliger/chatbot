@@ -37,12 +37,15 @@ class GraphMode(Mode):
     def chatbot_factory(self, llm: BaseChatModel):
         def chatbot_node(state: list[BaseMessage]) -> BaseMessage:
             prompt = ChatPromptTemplate.from_messages([
-                SystemMessage(content="Tu es un assistant qui répond aux questions de l'utilisateur."),
+                SystemMessage(content="Tu es un assistant qui répond aux questions de l'utilisateur et qui prend en compte les critiques lorsqu'il y en a."),
                 MessagesPlaceholder("{messages}")
             ])
             
             chain = prompt | llm
-            return chain.invoke(state)
+
+            answer = chain.invoke(state)
+            self.console.bot_output(answer.content)
+            return answer
         return chatbot_node
 
     def criticize_factory(self, llm: BaseChatModel):
@@ -50,14 +53,22 @@ class GraphMode(Mode):
             prompt = ChatPromptTemplate.from_messages([
                 SystemMessage("""
                     Tu es un copywriter qui maîtrise les bonnes pratiques de rédaction professionnelles.
-                    Tu dois critiquer le ernier message envoyé par l'assistant avant toi à la lumière de tes connaissances en copywriting.
+                    Tu dois critiquer le dernier message envoyé par l'assistant avant toi à la lumière de tes connaissances en copywriting.
                 """),
                 MessagesPlaceholder("{messages}")
             ])
             
             chain = prompt | llm
-            return chain.invoke(state)    
+
+            answer = chain.invoke(state)
+            self.console.bot_output(answer.content)
+            return answer
         return criticize_node
+    
+    def should_continue_factory(self, limit: int = 3):
+        def should_continue(state: list[BaseMessage]):
+            return END if len(state) > limit else "chatbot"
+        return should_continue
 
     def run(self):
         llm = init_chat_model(
@@ -66,6 +77,7 @@ class GraphMode(Mode):
 
         chatbot_node = self.chatbot_factory(llm)
         criticize_node = self.criticize_factory(llm)
+        should_continue = self.should_continue_factory(6)
 
         graph = MessageGraph()
 
@@ -74,12 +86,9 @@ class GraphMode(Mode):
 
         graph.set_entry_point("chatbot")
         graph.add_edge("chatbot", "criticize")
-        graph.set_finish_point("chatbot")
+        graph.add_conditional_edges("criticize", should_continue)
 
         app = graph.compile()
 
         human_input = self.console.human_input()
         history = app.invoke(human_input)
-
-        last_message = history[-1]
-        self.console.bot_output(last_message.content)
