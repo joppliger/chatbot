@@ -4,9 +4,10 @@ langchain-openai
 langchain-chroma
 langchain_community 
 langchain_experimental
+langchain_openai
+langgraph
 rich
 python-dotenv
 numpy
 pypdf
 youtube_transcript_api
-langchain_openai
