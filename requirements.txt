@@ -6,6 +6,7 @@ langchain_community
 langchain_experimental
 langchain_openai
 langgraph
+langgraph-checkpoint-sqlite
 rich
 python-dotenv
 numpy
